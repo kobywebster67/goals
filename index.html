@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Goals</title>
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --panel: #2a2a2a;
+    --accent: #ffd700;
+    --muted: #bdbdbd;
+    --danger: #ff6b6b;
+    --cell-size: 72px;
+    --flip-duration: 360ms;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background: var(--bg);
+    color: var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, var(--panel), #242424);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    margin-bottom: 14px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .container {
+    width: 100%;
+    max-width: 980px;
+    background: linear-gradient(180deg, #222, #1f1f1f);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid rgba(255, 215, 0, 0.04);
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-right: auto;
+  }
+  .status {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .board-wrap {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .board {
+    display: grid;
+    gap: 8px;
+  }
+  .board-inner {
+    display: grid;
+    grid-auto-rows: var(--cell-size);
+    gap: 8px;
+    justify-content: center;
+  }
+  /* flip card cells */
+  .cell-outer {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    perspective: 900px;
+  }
+  .cell {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform var(--flip-duration) ease, box-shadow 120ms;
+    cursor: pointer;
+  }
+  .cell.flipped {
+    transform: rotateY(180deg);
+  }
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    backface-visibility: hidden;
+    border: 2px solid #333;
+    user-select: none;
+  }
+  .face.front {
+    background: #2e2e2e;
+    color: var(--accent);
+  }
+  .face.back {
+    transform: rotateY(180deg);
+    background: #222;
+    color: var(--accent);
+  }
+  /* reveal styles */
+  .back.safe {
+    background: linear-gradient(180deg, #2a2a2a, #232323);
+    border-color: rgba(255, 215, 0, 0.12);
+    color: var(--accent);
+  }
+  .back.bomb {
+    background: linear-gradient(180deg, #3b1a1a, #2e1414);
+    border-color: rgba(255, 100, 100, 0.18);
+    color: var(--danger);
+  }
+  /* pressed indentation */
+  .cell-press {
+    transform: translateY(4px);
+  }
+  /* column highlight */
+  .col-active .face.front {
+    border-color: rgba(255, 215, 0, 0.14);
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .controls input[type=number] {
+    width: 110px;
+    padding: 8px;
+    border-radius: 6px;
+    background: #222;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    user-select: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #111;
+    transition: background-color 0.2s;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #f4d834;
+  }
+  .btn-primary:disabled {
+    background: rgba(255, 215, 0, 0.4);
+    cursor: default;
+  }
+  .btn-muted {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-muted:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .status-line {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    min-height: 24px;
+  }
+  @keyframes shakeX {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-6px);
+    }
+    50% {
+      transform: translateX(6px);
+    }
+    75% {
+      transform: translateX(-4px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  .shake {
+    animation: shakeX 360ms linear;
+  }
+  @media (max-width: 700px) {
+    :root {
+      --cell-size: 56px;
+    }
+    .container {
+      padding: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    Balance: $<span id="balance">1000.00</span>
+  </div>
+  <div class="container">
+    <div class="header-row">
+      <div class="title">Goals — Enhanced Demo</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:14px;color:var(--muted)">Current Multiplier:</div>
+        <div style="font-weight:700;font-size:18px;color:var(--accent)" id="currentMult">—</div>
+      </div>
+    </div>
+    <div class="board-wrap">
+      <div style="flex:1">
+        <div id="multRow" style="display:flex;gap:8px;margin-bottom:10px;justify-content:center;"></div>
+        <div id="board" class="board">
+          <div id="boardInner" class="board-inner"></div>
+        </div>
+        <div class="status-line" id="status">Idle — press <strong>Bet</strong> to start</div>
+      </div>
+      <div style="width:260px;">
+        <div style="background:#141414;padding:14px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);">
+          <div style="font-size:14px;color:var(--muted);margin-bottom:8px">Play Controls</div>
+          <div class="controls">
+            <input id="betInput" type="number" min="0.1" step="0.1" value="10" />
+            <button id="betBtn" class="btn btn-primary">Bet</button>
+            <button id="cashBtn" class="btn btn-muted" disabled>Cash Out</button>
+          </div>
+          <div style="margin-top:10px;font-size:14px;color:var(--muted)">Field size:</div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button id="sizeMedium" class="btn btn-muted">Medium (7×4)</button>
+            <button id="sizeLarge" class="btn btn-muted">Large (10×5)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Elements
+  const balanceEl = document.getElementById('balance');
+  const betInput = document.getElementById('betInput');
+  const betBtn = document.getElementById('betBtn');
+  const cashBtn = document.getElementById('cashBtn');
+  const boardInner = document.getElementById('boardInner');
+  const multRow = document.getElementById('multRow');
+  const statusEl = document.getElementById('status');
+  const currentMultEl = document.getElementById('currentMult');
+  const sizeMedium = document.getElementById('sizeMedium');
+  const sizeLarge = document.getElementById('sizeLarge');
+
+  // State
+  let state = {
+    balance: 1000.00,
+    stake: 0,
+    inRound: false,
+    cols: 7,
+    rows: 4,
+    safeRowPerCol: [],  // which rows have the balls (safe)
+    multipliers: [],
+    currentCol: 0,
+  };
+
+  // Utils
+  const fmt = n => Number(n).toFixed(2);
+  const rand = n => Math.floor(Math.random() * n);
+
+  // Update UI functions
+  function updateBalance() {
+    balanceEl.textContent = fmt(state.balance);
+  }
+  function setStatus(t) {
+    statusEl.innerHTML = t;
+  }
+
+  function computeMultipliers() {
+    const maxMult = 9;
+    state.multipliers = Array.from({ length: state.cols }, (_, i) => {
+      if (state.cols === 1) return maxMult;
+      const mult = 1 + ((maxMult - 1) * (i / (state.cols - 1)));
+      return Math.round(mult * 100) / 100;
+    });
+  }
+
+  function prepareRound() {
+    // For each column, assign exactly ONE bomb and rest are balls
+    // We'll store safe rows per column (safe tiles = balls)
+    state.safeRowPerCol = [];
+
+    for (let c = 0; c < state.cols; c++) {
+      // Pick bomb position randomly
+      const bombRow = rand(state.rows);
+      // For that column, safe tiles are all rows except bombRow
+      // We'll store the bombRow for logic to know if tile clicked is bomb
+      state.safeRowPerCol[c] = bombRow;
+    }
+    computeMultipliers();
+    state.currentCol = 0;
+    renderBoard();
+    highlightColumn(state.currentCol);
+  }
+
+  function startRound() {
+    if (state.inRound) return;
+    const bet = Math.max(0.1, parseFloat(betInput.value) || 0);
+    if (bet <= 0) {
+      setStatus('Enter a valid bet');
+      return;
+    }
+    if (bet > state.balance) {
+      setStatus('Insufficient balance');
+      return;
+    }
+
+    state.stake = bet;
+    state.balance -= bet; // deduct stake upfront
+    updateBalance();
+
+    state.inRound = true;
+    prepareRound();
+    setStatus(`Round started — pick the safe tile (⚽) in column <strong>1</strong>`);
+    currentMultEl.textContent = '—';
+    betBtn.disabled = true;
+    cashBtn.disabled = false;
+  }
+
+  function renderBoard() {
+    multRow.innerHTML = '';
+    state.multipliers.forEach((m) => {
+      const el = document.createElement('div');
+      el.style.minWidth = '48px';
+      el.style.padding = '6px 8px';
+      el.style.borderRadius = '6px';
+      el.style.background = 'transparent';
+      el.style.color = 'var(--muted)';
+      el.style.fontSize = '13px';
+      el.style.textAlign = 'center';
+      el.textContent = m + 'x';
+      multRow.appendChild(el);
+    });
+
+    boardInner.innerHTML = '';
+    boardInner.style.gridTemplateColumns = `repeat(${state.cols}, var(--cell-size))`;
+    boardInner.style.gridTemplateRows = `repeat(${state.rows}, var(--cell-size))`;
+
+    for (let r = 0; r < state.rows; r++) {
+      for (let c = 0; c < state.cols; c++) {
+        const outer = document.createElement('div');
+        outer.className = 'cell-outer';
+        outer.style.margin = '0';
+
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+
+        const front = document.createElement('div');
+        front.className = 'face front';
+        front.textContent = '';
+
+        const back = document.createElement('div');
+        back.className = 'face back';
+
+        cell.appendChild(front);
+        cell.appendChild(back);
+        outer.appendChild(cell);
+
+        outer.addEventListener('click', () => handleClick(r, c, cell, back, front));
+
+        boardInner.appendChild(outer);
+      }
+    }
+  }
+
+  function highlightColumn(col) {
+    const children = boardInner.children;
+    for (let i = 0; i < children.length; i++) {
+      const outer = children[i];
+      const cell = outer.querySelector('.cell');
+      const c = parseInt(cell.dataset.c, 10);
+      if (c === col) outer.classList.add('col-active');
+      else outer.classList.remove('col-active');
+    }
+  }
+
+  function handleClick(r, c, cell, back, front) {
+    if (!state.inRound) return;
+    if (c !== state.currentCol) {
+      boardInner.classList.remove('shake');
+      void boardInner.offsetWidth;
+      boardInner.classList.add('shake');
+      setStatus(`Pick column <strong>${state.currentCol + 1}</strong>. You tried column ${c + 1}`);
+      return;
+    }
+
+    if (cell.classList.contains('flipped')) return;
+
+    // Press indent effect
+    cell.classList.add('cell-press');
+    setTimeout(() => cell.classList.remove('cell-press'), 120);
+
+    // Wait for indent to finish before reveal
+    setTimeout(() => {
+      // Check if clicked tile is bomb or safe
+      const bombRow = state.safeRowPerCol[c];
+      const isBomb = r === bombRow;
+      if (isBomb) {
+        back.classList.add('bomb');
+        back.textContent = '💣';
+        cell.classList.add('flipped');
+        endRound(false, c);
+      } else {
+        back.classList.add('safe');
+        back.textContent = '⚽';
+        cell.classList.add('flipped');
+        // Update multiplier
+        const mult = state.multipliers[c];
+        currentMultEl.textContent = mult + 'x';
+        state.currentCol += 1;
+        if (state.currentCol >= state.cols) {
+          endRound(true, state.cols - 1);
+        } else {
+          highlightColumn(state.currentCol);
+          setStatus(`Safe! Multiplier ${mult}x — pick column <strong>${state.currentCol + 1}</strong>`);
+        }
+      }
+    }, 140);
+  }
+
+  function revealAll() {
+    const children = boardInner.children;
+    for (let i = 0; i < children.length; i++) {
+      const outer = children[i];
+      const cell = outer.querySelector('.cell');
+      const back = cell.querySelector('.back');
+      const r = parseInt(cell.dataset.r, 10);
+      const c = parseInt(cell.dataset.c, 10);
+      if (cell.classList.contains('flipped')) continue;
+      const bombRow = state.safeRowPerCol[c];
+      if (r === bombRow) {
+        back.classList.add('bomb');
+        back.textContent = '💣';
+      } else {
+        back.classList.add('safe');
+        back.textContent = '⚽';
+      }
+      cell.classList.add('flipped');
+    }
+  }
+
+  function endRound(won, colIndex) {
+    state.inRound = false;
+    betBtn.disabled = false;
+    cashBtn.disabled = true;
+    if (won) {
+      const mult = state.multipliers[colIndex];
+      const win = state.stake * mult;
+      animateBalanceIncrease(state.balance, state.balance + win, 800, () => {
+        state.balance += win;
+        updateBalance();
+      });
+      setStatus(`Round complete — you won $${fmt(win)} (×${mult})`);
+    } else {
+      setStatus(`Boom! Hit a bomb in column ${colIndex + 1}. You lost $${fmt(state.stake)}`);
+    }
+    currentMultEl.textContent = '—';
+    revealAll();
+  }
+
+  function cashOut() {
+    if (!state.inRound) {
+      setStatus('Not in a round');
+      return;
+    }
+    if (state.currentCol === 0) {
+      setStatus('You need to pick at least one tile to cash out');
+      return;
+    }
+    const mult = state.multipliers[state.currentCol - 1];
+    const win = state.stake * mult;
+    animateBalanceIncrease(state.balance, state.balance + win, 800, () => {
+      state.balance += win;
+      updateBalance();
+    });
+    setStatus(`Cashed out with $${fmt(win)} (×${mult})`);
+    state.inRound = false;
+    betBtn.disabled = false;
+    cashBtn.disabled = true;
+    revealAll();
+    currentMultEl.textContent = '—';
+  }
+
+  // Animate balance from start to end in duration ms, then call callback
+  function animateBalanceIncrease(start, end, duration, callback) {
+    const startTime = performance.now();
+    function step(t) {
+      let progress = Math.min((t - startTime) / duration, 1);
+      let val = start + (end - start) * progress;
+      balanceEl.textContent = fmt(val);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        callback();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  betBtn.onclick = startRound;
+  cashBtn.onclick = cashOut;
+
+  sizeMedium.onclick = () => {
+    if (state.inRound) return;
+    state.cols = 7;
+    state.rows = 4;
+    sizeMedium.classList.add('btn-primary');
+    sizeLarge.classList.remove('btn-primary');
+    prepareRound();
+    setStatus('Field size set to 7×4');
+  };
+  sizeLarge.onclick = () => {
+    if (state.inRound) return;
+    state.cols = 10;
+    state.rows = 5;
+    sizeLarge.classList.add('btn-primary');
+    sizeMedium.classList.remove('btn-primary');
+    prepareRound();
+    setStatus('Field size set to 10×5');
+  };
+
+  // Initialize default size button highlight
+  sizeMedium.classList.add('btn-primary');
+
+  updateBalance();
+  prepareRound();
+  setStatus('Idle — press <strong>Bet</strong> to start');
+</script>
+</body>
+</html>
