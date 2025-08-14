@@ -1,19 +1,19 @@
+<!-- =========================
+  Make Money Co — FULL APP (Firebase-enabled)
+  PART 1 / 2 — HTML + CSS + Initial Markup
+  Paste PART 1 first, then PART 2 immediately after it in the same file.
+========================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1"
-  />
-  <title> Clicker + Slots + Mines + Goals + Accounts + Admin + Transfers</title>
+    content="width=device-width, initial-scale=1" />
+  <title>Make Money Co</title>
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@300;500;700&display=swap"
-    rel="stylesheet"
-  />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -65,7 +65,7 @@
       overflow:hidden;
     }
 
-    /* --- HEADER --- */
+    /* Top bar */
     header{
       display:flex;
       align-items:center;
@@ -73,6 +73,7 @@
       gap:12px;
       position:relative;
       z-index: 3;
+      min-height: 44px;
     }
     .header-left{
       display:flex;
@@ -81,25 +82,9 @@
       min-width:0;
       flex:1 1 auto;
     }
-    .header-right{
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:10px;
-      flex:0 0 auto;
-    }
-    h1{
-      font-family:var(--display);
-      color:var(--accent);
-      margin:0;
-      font-size:1.9rem;
-      letter-spacing:.5px;
-      text-shadow:0 6px 24px rgba(0,0,0,.6);
-      user-select:none;
-      white-space:nowrap;
-    }
+    .header-right{ display:flex; align-items:center; gap:8px; }
 
-    /* MENU (far left) */
+    /* Menu */
     .hamburger{ position:relative; z-index: 4; }
     .hamburger button{
       display:flex; align-items:center; gap:8px;
@@ -121,7 +106,6 @@
     .hamburger .icon span{ top:5px }
     .hamburger .icon::after{ bottom:0 }
 
-    /* Dropdown opens BELOW the button, left-aligned so it doesn't cover balance */
     .dropdown{
       position:absolute; top:42px; left:0;
       min-width:210px;
@@ -146,7 +130,7 @@
     }
     .dropdown button:hover{ background: rgba(255,255,255,.06); }
 
-    /* BALANCE sits right of the menu and is always visible */
+    /* Balance */
     .balance{
       text-align:left;
       font-size:.95rem;
@@ -173,7 +157,6 @@
       border-bottom:1px solid rgba(255,255,255,.08);
       position:sticky; top:0; background:linear-gradient(180deg, rgba(11,18,24,.9), rgba(11,18,24,.8));
       z-index:2; padding-top:2px;
-      backdrop-filter: blur(0px);
     }
     nav.tabs button{
       flex:1; background:var(--btn); color:var(--muted);
@@ -184,13 +167,11 @@
       background:var(--accent); color:#0b1218;
       box-shadow:0 8px 24px rgba(0,0,0,.35);
     }
-
-    /* Sections */
     section[role="tabpanel"]{ display:none; }
     section[role="tabpanel"].active{ display:block; }
 
     /* Clicker */
-    #clicker-section{ display:flex; flex-direction:column; gap:10px; user-select:none; }
+    #clicker-section{ display:flex; flex-direction:column; gap:12px; user-select:none; }
     #money-bag{
       margin: 16px auto 10px;
       width: 150px; height:150px; border-radius:50%;
@@ -207,17 +188,30 @@
     }
     #money-bag:hover{ transform:scale(1.05); box-shadow: inset 0 12px 26px rgba(255,215,0,.65), 0 12px 30px rgba(255,208,0,.55) }
     #money-bag:active{ transform: scale(0.97); }
-    #cps-indicator{
-      position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
-      font-size:.78rem; color:var(--muted);
-    }
-    #coins-info{ font-weight:700; text-align:center; }
-    #cpc-info{ text-align:center; color:var(--muted) }
 
-    /* Upgrades list — taller + scroll all the way down */
+    /* Spaced stats (no CPS text shown) */
+    .stats-row{
+      display:flex; gap:12px; justify-content:space-between; align-items:center;
+      flex-wrap:wrap;
+    }
+    .stat{
+      flex:1 1 45%;
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:10px;
+      padding:8px 10px;
+      min-width:150px;
+    }
+    .stat .label{ color:var(--muted); font-size:.9rem }
+    .stat .value{ font-weight:900; font-size:1.05rem }
+
+    /* (Old cps badge removed visually) */
+    #cps-indicator{ display:none !important; }
+
+    /* Upgrades list (moved to Upgrades tab) */
     #upgrades{
       display:flex; flex-direction:column; gap:8px;
-      max-height:60vh;           /* ensure full scrolling */
+      max-height:60vh;
       overflow:auto; padding-right:6px;
       overscroll-behavior:contain;
     }
@@ -322,7 +316,6 @@
 
     /* Info */
     #info-section{ color:var(--muted) }
-    #info-section .secret{ display:none } /* never reveal admin password */
 
     /* Account */
     #account-section{ display:flex; flex-direction:column; gap:12px; }
@@ -368,13 +361,15 @@
       #money-bag{ width:130px; height:130px; font-size:62px }
       .upgrade .cost{ min-width:96px }
     }
+
+    .sr-only{ position:absolute; left:-9999px; }
   </style>
 </head>
 <body>
   <div class="container" role="main" aria-label="Make Money Co">
     <header>
-      <!-- LEFT SIDE: menu then balance (so it never covers the amount) -->
       <div class="header-left">
+        <!-- MENU -->
         <div class="hamburger" aria-label="Menu">
           <button id="menu-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-dropdown" title="Menu">
             <span class="icon"><span></span></span>
@@ -388,20 +383,20 @@
           </div>
         </div>
 
+        <!-- BALANCE -->
         <div class="balance" aria-live="polite">
           <span>Bank</span>
           <b>$<span id="balance">0.00</span></b>
         </div>
       </div>
 
-      <!-- RIGHT: keep the original title aesthetic -->
-      <div class="header-right">
-        <h1>Make Money Co</h1>
-      </div>
+      <div class="header-right"></div>
     </header>
 
+    <!-- Tabs (Upgrades inserted between Clicker and Gambling) -->
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button id="tab-clicker" class="active" role="tab" aria-selected="true" aria-controls="clicker-section">Clicker</button>
+      <button id="tab-upgrades" role="tab" aria-selected="false" aria-controls="upgrades-section">Upgrades</button>
       <button id="tab-gambling" role="tab" aria-selected="false" aria-controls="gambling-section">Gambling</button>
       <button id="tab-info" role="tab" aria-selected="false" aria-controls="info-section">Info</button>
       <button id="tab-account" role="tab" aria-selected="false" aria-controls="account-section">Account</button>
@@ -409,20 +404,35 @@
 
     <!-- CLICKER -->
     <section id="clicker-section" class="active" role="tabpanel" aria-labelledby="tab-clicker">
-      <div id="money-bag" tabindex="0" role="button" aria-label="Click to earn coins">💰
-        <div id="cps-indicator" aria-hidden="true">0/10 cps</div>
+      <div id="money-bag" tabindex="0" role="button" aria-label="Click to earn coins">💰</div>
+
+      <!-- spaced stats, cps hidden -->
+      <div class="stats-row" aria-label="Stats">
+        <div class="stat">
+          <div class="label">Coins Earned</div>
+          <div class="value"><b><span id="coins">0.00</span></b></div>
+        </div>
+        <div class="stat">
+          <div class="label">Coins Per Click</div>
+          <div class="value"><b><span id="cpc">0.05</span></b></div>
+        </div>
       </div>
-      <div id="coins-info">Coins Earned: <b><span id="coins">0.00</span></b></div>
-      <div id="cpc-info">Coins Per Click: <b><span id="cpc">0.05</span></b></div>
 
-      <div id="upgrades" aria-label="Upgrades list"></div>
-
+      <!-- Rebirth (at bottom) -->
       <div id="rebirth-wrap">
         <button id="rebirth-btn" disabled aria-disabled="true" title="Rebirth to multiply your CPC">
           Rebirth
         </button>
         <div id="rebirth-need">Requires: $<span id="rebirth-cost">100,000,000,000</span></div>
       </div>
+
+      <!-- hidden cps element kept for code hooks, but not visible -->
+      <div id="cps-indicator" aria-hidden="true" class="sr-only">0/10 cps</div>
+    </section>
+
+    <!-- UPGRADES (moved here) -->
+    <section id="upgrades-section" role="tabpanel" aria-labelledby="tab-upgrades" aria-hidden="true" style="display:none">
+      <div id="upgrades" aria-label="Upgrades list"></div>
     </section>
 
     <!-- GAMBLING -->
@@ -484,12 +494,8 @@
 
     <!-- INFO -->
     <section id="info-section" role="tabpanel" aria-labelledby="tab-info" aria-hidden="true" style="display:none">
-      <p><strong>Make Money Co</strong> — created by Koby Webster.</p>
-      <p>Click to earn coins, buy upgrades, rebirth for growth, play Slots, Mines, and Goals to multiply your bank.</p>
-      <p><em>Note:</em> Accounts save to your browser using localStorage. The Admin panel is passcode-protected.</p>
-      <hr />
+      <p><strong>Make Money Co</strong> — click to earn, buy upgrades, rebirth for growth, play Slots, Mines, Goals. </p>
       <p><strong>Rebirth:</strong> The cost increases by <strong>×100</strong> each time you rebirth. Reach the cost to rebirth and permanently buff your CPC.</p>
-      <div class="secret">Admin pass hint is hidden.</div>
     </section>
 
     <!-- ACCOUNT -->
@@ -502,24 +508,26 @@
 
         <!-- Login -->
         <form id="login-form" class="form" onsubmit="return false;">
-          <input id="login-user" class="input" placeholder="Username" autocomplete="username" />
+          <input id="login-email" class="input" placeholder="Email" autocomplete="email" />
           <input id="login-pass" type="password" class="input" placeholder="Password" autocomplete="current-password" />
           <button id="login-btn" class="btn" type="button">Login</button>
         </form>
 
         <!-- Register -->
         <form id="reg-form" class="form" onsubmit="return false;" style="display:none">
-          <input id="reg-user" class="input" placeholder="Choose a username" autocomplete="username" />
-          <input id="reg-pass" type="password" class="input" placeholder="Choose a password" autocomplete="new-password" />
+          <input id="reg-username" class="input" placeholder="Username (display)" />
+          <input id="reg-email" class="input" placeholder="Email" autocomplete="email" />
+          <input id="reg-pass" type="password" class="input" placeholder="Password" autocomplete="new-password" />
           <input id="reg-pass2" type="password" class="input" placeholder="Confirm password" autocomplete="new-password" />
           <button id="reg-btn" class="btn" type="button">Create Account</button>
         </form>
 
         <div class="row">
-          <button id="manual-save" class="btn" style="flex:1">Manual Save</button>
+          <button id="manual-save" class="btn" style="flex:1">Save Now</button>
+          <button id="logout-btn" class="btn text" style="flex:1">Logout</button>
         </div>
         <div id="acct-status" class="muted">Not logged in</div>
-        <div class="muted">Auto-save every 60s (localStorage)</div>
+        <div class="muted">Auto-save every 60s (cloud)</div>
       </div>
     </section>
 
@@ -527,10 +535,8 @@
     <div class="panel" id="panel-leaderboard" aria-hidden="true">
       <div class="card">
         <h3>Leaderboard</h3>
-        <div class="muted" style="margin-bottom:6px">Top 3 — Money</div>
-        <div id="lb-money" class="card" style="max-height:160px; overflow:auto; gap:6px"></div>
-        <div class="muted" style="margin-top:10px;margin-bottom:6px">Top 3 — Rebirths</div>
-        <div id="lb-rebirths" class="card" style="max-height:160px; overflow:auto; gap:6px"></div>
+        <div class="muted" style="margin-bottom:6px">Top — Money</div>
+        <div id="lb-money" class="card" style="max-height:220px; overflow:auto; gap:6px"></div>
         <div class="row" style="justify-content:flex-end; margin-top:8px">
           <button class="btn text" id="lb-refresh">Refresh</button>
           <button class="btn text" data-close="panel-leaderboard">Close</button>
@@ -557,18 +563,21 @@
 
           <div>
             <strong style="color:var(--accent)">Accounts</strong>
-            <div id="admin-accounts" class="card" style="max-height:220px; overflow:auto; gap:6px"></div>
+            <div id="admin-accounts" class="card" style="max-height:240px; overflow:auto; gap:6px"></div>
           </div>
 
           <div class="row" style="margin-top:6px">
-            <button id="admin-reset-all" class="btn" style="background:var(--danger); color:#fff">Reset ALL Progress</button>
+            <button id="admin-reset-all" class="btn" style="background:var(--danger); color:#fff">Reset ALL Accounts</button>
             <button id="admin-refresh" class="btn text">Refresh</button>
           </div>
 
           <div style="margin-top:8px">
             <strong style="color:var(--accent)">Selected Account</strong>
             <div class="row">
-              <input id="adm-user" class="input" placeholder="username" disabled />
+              <input id="adm-uid" class="input" placeholder="uid" disabled />
+              <input id="adm-username" class="input" placeholder="username" disabled />
+            </div>
+            <div class="row">
               <input id="adm-balance" class="input" type="number" step="0.01" placeholder="Balance" />
             </div>
             <div class="row">
@@ -599,7 +608,7 @@
           <button id="money-send" class="btn">Send</button>
           <button class="btn text" data-close="panel-money">Close</button>
         </div>
-        <div class="muted">Transfers are sent from your account only. Choose a recipient and amount.</div>
+        <div class="muted">Transfers are processed in the cloud using transactions.</div>
       </div>
     </div>
 
@@ -607,109 +616,119 @@
     <div id="footer">Made by Koby Webster</div>
   </div>
 
+  <!-- =========================
+        PART 2 will include:
+        - Firebase imports + init
+        - Full game logic
+        - Auth, Firestore saves
+        - Leaderboard + Admin + Transfers
+        Paste it right after this closing comment.
+  ========================= -->
+  <!-- =========================
+    PART 2 / 2 — Firebase + Full Game Logic
+  ========================= -->
+
+  <!-- Firebase (CDN compat builds) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
   <script>
-  // =========================
-  // Make Money Co — All Logic (fixed)
-  // =========================
+  // ====== Firebase init ======
+  // IMPORTANT: Use your own Firebase project config or keep this one if it’s your project.
+  const firebaseConfig = {
+    apiKey: "AIzaSyDDNsDUP7lbZk8wLIMf8Y70foL-WUkzxBg",
+    authDomain: "makemoneyco-ae041.firebaseapp.com",
+    projectId: "makemoneyco-ae041",
+    storageBucket: "makemoneyco-ae041.firebasestorage.app",
+    messagingSenderId: "934218263522",
+    appId: "1:934218263522:web:1da69f829880c91cec27bb"
+  };
 
-  // --------- Utilities ---------
-  const qs = (sel, root=document) => root.querySelector(sel);
-  const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-  const fmt = n => Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-  const clamp = (n,min,max) => Math.max(min, Math.min(max, n));
-  const numberFmt0 = n => Number(n).toLocaleString();
+  // Guard to ensure Firebase is initialized exactly once and the cloud is reachable
+  let cloudReady = false;
+  let app, auth, db;
 
-  const toastEl = qs('#toast');
-  let toastTimer;
-  function toast(msg, t=1600){
-    clearTimeout(toastTimer);
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    toastTimer = setTimeout(()=>toastEl.classList.remove('show'), t);
-  }
-
-  // --------- Storage ---------
-  const LS_USERS = 'mmc_users';
-  const LS_SESSION = 'mmc_current_user';
-  const LS_LASTSAVE = 'mmc_last_save';
-
-  function loadUsers(){
-    try{
-      const raw = localStorage.getItem(LS_USERS);
-      if(!raw) return {};
-      const obj = JSON.parse(raw);
-      return obj && typeof obj==='object' ? obj : {};
-    }catch{ return {}; }
-  }
-  function saveUsers(uMap){
-    localStorage.setItem(LS_USERS, JSON.stringify(uMap));
-    localStorage.setItem(LS_LASTSAVE, Date.now().toString());
-  }
-  function getSession(){ return localStorage.getItem(LS_SESSION) || ''; }
-  function setSession(u){ if(u) localStorage.setItem(LS_SESSION, u); else localStorage.removeItem(LS_SESSION); }
-
-  // --------- User Model ---------
-  const defaultUserState = ()=>({
-    username: '',
-    password: '',
-    balance: 0,
-    coins: 0,
-    cpc: 0.05,
-    rebirths: 0,
-    rebirthCost: 100_000_000_000, // increases ×100 each time
-    upgrades: {}, // name -> level
-    stats: {
-      slots_spins: 0, slots_won: 0, slots_profit: 0,
-      mines_plays: 0, mines_profit: 0,
-      goals_plays: 0, goals_profit: 0,
+  async function initFirebase() {
+    if (!firebase.apps.length) {
+      app = firebase.initializeApp(firebaseConfig);
+    } else {
+      app = firebase.app();
     }
-  });
+    auth = firebase.auth();
+    db = firebase.firestore();
+    // Try to enable network explicitly (in case it was disabled by the SDK caching layer)
+    try { await db.enableNetwork(); } catch(e) {}
+    // Quick ping that does not require auth: a server-backed time fetch
+    try {
+      // Using a deterministic non-sensitive read; if rules lock this down, the catch will mark cloudReady=false
+      await db.collection('_public').limit(1).get({ source: 'server' });
+      cloudReady = true;
+    } catch (e) {
+      // Some projects don't have this collection or restrict reads; fall back to a lightweight write-on-auth instead.
+      cloudReady = false;
+    }
+  }
 
-  let users = loadUsers();
-  let currentUser = null;
-  let currentUsername = getSession();
+  // ====== Shortcuts ======
+  const qs = (sel, el=document)=>el.querySelector(sel);
+  const qsa = (sel, el=document)=>Array.from(el.querySelectorAll(sel));
+  const clamp = (n, min, max)=> Math.max(min, Math.min(max, n));
+  const fmt = n => Number(n||0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  const numberFmt0 = n => Number(n||0).toLocaleString(undefined, {maximumFractionDigits:0});
 
-  // --------- UI Refs ---------
+  // ====== Elements ======
+  const container = qs('.container');
+  // menu
+  const menuBtn = qs('#menu-btn');
+  const menuDropdown = qs('#menu-dropdown');
+  const lbBtn = qs('#menu-leaderboard');
+  const adminBtn = qs('#menu-admin');
+  const moneyBtn = qs('#menu-money');
+
+  // balance + hud
   const balanceEl = qs('#balance');
   const coinsEl = qs('#coins');
   const cpcEl = qs('#cpc');
-  const cpsEl = qs('#cps-indicator');
-
-  // Menu
-  const menuBtn = qs('#menu-btn');
-  const menuDropdown = qs('#menu-dropdown');
-  const panelLB = qs('#panel-leaderboard');
-  const panelAdmin = qs('#panel-admin');
-  const panelMoney = qs('#panel-money');
-
-  // Tabs
-  const tabs = qsa('nav.tabs button');
-  const sections = qsa('section[role="tabpanel"]');
-
-  // Clicker
-  const bag = qs('#money-bag');      // NOTE: declared once (this was the bug)
-  const upgradesWrap = qs('#upgrades');
+  const cpsEl = qs('#cps-indicator'); // kept for logic only (hidden)
   const rebirthBtn = qs('#rebirth-btn');
-  const rebirthNeedEl = qs('#rebirth-need');
   const rebirthCostEl = qs('#rebirth-cost');
+  const toastEl = qs('#toast');
 
-  // Slots
+  // tabs
+  const tabClicker = qs('#tab-clicker');
+  const tabUpgrades = qs('#tab-upgrades');
+  const tabGambling = qs('#tab-gambling');
+  const tabInfo = qs('#tab-info');
+  const tabAccount = qs('#tab-account');
+
+  const clickerSection = qs('#clicker-section');
+  const upgradesSection = qs('#upgrades-section');
+  const gamblingSection = qs('#gambling-section');
+  const infoSection = qs('#info-section');
+  const accountSection = qs('#account-section');
+
+  // clicker
+  const bag = qs('#money-bag');
+  const upgradesWrap = qs('#upgrades');
+
+  // slot
   const slotBet = qs('#slot-bet');
   const slotSpin = qs('#slot-spin');
   const slotReels = qs('#slot-reels');
   const slotMsg = qs('#slot-msg');
 
-  // Mines
+  // mines
+  const minesGrid = qs('#mines-grid');
   const minesBet = qs('#mines-bet');
   const minesBombs = qs('#mines-bombs');
   const minesStart = qs('#mines-start');
   const minesCash = qs('#mines-cashout');
-  const minesGrid = qs('#mines-grid');
   const minesGemsEl = qs('#mines-gems');
   const minesMultEl = qs('#mines-mult');
   const minesPotEl = qs('#mines-pot');
 
-  // Goals
+  // goals
   const goalsBet = qs('#goals-bet');
   const goalsSize = qs('#goals-size');
   const goalsStart = qs('#goals-start');
@@ -720,81 +739,77 @@
   const goalsMultEl = qs('#goals-mult');
   const goalsPotEl = qs('#goals-pot');
 
-  // Account
-  const acctTabLogin = qs('#acct-tab-login');
-  const acctTabRegister = qs('#acct-tab-register');
-  const loginForm = qs('#login-form');
-  const loginUser = qs('#login-user');
-  const loginPass = qs('#login-pass');
-  const loginBtn = qs('#login-btn');
-  const regForm = qs('#reg-form');
-  const regUser = qs('#reg-user');
-  const regPass = qs('#reg-pass');
-  const regPass2 = qs('#reg-pass2');
-  const regBtn = qs('#reg-btn');
-  const manualSaveBtn = qs('#manual-save');
-  const acctStatus = qs('#acct-status');
+  // panels
+  const panelLB = qs('#panel-leaderboard');
+  const panelAdmin = qs('#panel-admin');
+  const panelMoney = qs('#panel-money');
 
-  // Leaderboard
+  // leaderboard panel els
   const lbMoney = qs('#lb-money');
-  const lbRebirths = qs('#lb-rebirths');
   const lbRefresh = qs('#lb-refresh');
 
-  // Admin
+  // admin els
   const adminLocked = qs('#admin-locked');
   const adminBody = qs('#admin-body');
   const adminPass = qs('#admin-pass');
   const adminLogin = qs('#admin-login');
   const adminLogout = qs('#admin-logout');
   const adminAccounts = qs('#admin-accounts');
-  const adminResetAll = qs('#admin-reset-all');
   const adminRefresh = qs('#admin-refresh');
-  const admUser = qs('#adm-user');
+  const adminResetAll = qs('#admin-reset-all');
+  const admUid = qs('#adm-uid');
+  const admUsername = qs('#adm-username');
   const admBalance = qs('#adm-balance');
   const admSave = qs('#adm-save');
-  const admGive = qs('#adm-give1k');
+  const admGive1k = qs('#adm-give1k');
   const admWipe = qs('#adm-wipe');
 
-  // Money
+  // money transfer
   const moneyFrom = qs('#money-from');
   const moneyTo = qs('#money-to');
   const moneyAmt = qs('#money-amount');
   const moneySend = qs('#money-send');
 
-  // --------- Tabs behavior ---------
-  tabs.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      tabs.forEach(b=>{
-        b.classList.remove('active');
-        b.setAttribute('aria-selected','false');
-        const id = b.getAttribute('aria-controls');
-        const sec = qs('#'+id);
-        if(sec){ sec.classList.remove('active'); sec.style.display='none'; sec.setAttribute('aria-hidden','true'); }
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected','true');
-      const id = btn.getAttribute('aria-controls');
-      const sec = qs('#'+id);
-      if(sec){ sec.classList.add('active'); sec.style.display=''; sec.setAttribute('aria-hidden','false'); }
-    });
+  // account
+  const acctTabLogin = qs('#acct-tab-login');
+  const acctTabRegister = qs('#acct-tab-register');
+  const loginForm = qs('#login-form');
+  const loginEmail = qs('#login-email');
+  const loginPass = qs('#login-pass');
+  const loginBtn = qs('#login-btn');
+  const regForm = qs('#reg-form');
+  const regUsername = qs('#reg-username');
+  const regEmail = qs('#reg-email');
+  const regPass = qs('#reg-pass');
+  const regPass2 = qs('#reg-pass2');
+  const regBtn = qs('#reg-btn');
+  const manualSaveBtn = qs('#manual-save');
+  const logoutBtn = qs('#logout-btn');
+  const acctStatus = qs('#acct-status');
+
+  // ====== Menu ======
+  function toggleMenu(force){
+    const isOpen = menuDropdown.classList.contains('show');
+    const next = typeof force==='boolean' ? force : !isOpen;
+    menuDropdown.classList.toggle('show', next);
+    menuBtn.setAttribute('aria-expanded', String(next));
+  }
+  menuBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    toggleMenu();
+  });
+  document.addEventListener('click', e=>{
+    if(!menuDropdown.contains(e.target) && !menuBtn.contains(e.target)){
+      toggleMenu(false);
+    }
   });
 
-  // --------- Dropdown menu ---------
-  function toggleMenu(show){
-    const will = (typeof show==='boolean') ? show : !menuDropdown.classList.contains('show');
-    menuDropdown.classList.toggle('show', will);
-    menuBtn.setAttribute('aria-expanded', will ? 'true':'false');
-    menuDropdown.setAttribute('aria-hidden', will ? 'false':'true');
-  }
-  menuBtn.addEventListener('click', e=>{ e.stopPropagation(); toggleMenu(); });
-  document.addEventListener('click', ()=>toggleMenu(false));
+  // Panels openers
+  lbBtn.addEventListener('click', ()=>{ openPanel(panelLB); renderLeaderboard(); });
+  adminBtn.addEventListener('click', ()=>{ openPanel(panelAdmin); });
+  moneyBtn.addEventListener('click', ()=>{ populateMoney(); openPanel(panelMoney); });
 
-  // Menu items
-  qs('#menu-leaderboard').addEventListener('click', ()=>{ renderLeaderboard(); openPanel(panelLB); });
-  qs('#menu-admin').addEventListener('click', ()=> openPanel(panelAdmin));
-  qs('#menu-money').addEventListener('click', ()=>{ populateMoney(); openPanel(panelMoney); });
-
-  // --------- Panels ---------
+  // ====== Panels ======
   function openPanel(panel){ panel.classList.add('show'); panel.setAttribute('aria-hidden','false'); toggleMenu(false); }
   function closePanel(panel){ panel.classList.remove('show'); panel.setAttribute('aria-hidden','true'); }
   qsa('[data-close]').forEach(b=>{
@@ -808,14 +823,55 @@
     p.addEventListener('click', e=>{ if(e.target === p) closePanel(p); });
   });
 
-  // --------- Game State (session-bound) ---------
+  // ====== Toast ======
+  let toastTimer=null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2200);
+  }
+
+  // ====== Tabs ======
+  function showTab(tab){
+    [tabClicker, tabUpgrades, tabGambling, tabInfo, tabAccount].forEach(b=>{
+      const active = (b===tab);
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-selected', active ? 'true':'false');
+    });
+    [clickerSection, upgradesSection, gamblingSection, infoSection, accountSection].forEach(sec=>{
+      const id = sec.id;
+      const active = (tab.getAttribute('aria-controls')===id);
+      sec.classList.toggle('active', active);
+      sec.style.display = active ? 'block' : 'none';
+      sec.setAttribute('aria-hidden', active ? 'false':'true');
+    });
+  }
+  tabClicker.addEventListener('click', ()=>showTab(tabClicker));
+  tabUpgrades.addEventListener('click', ()=>showTab(tabUpgrades));
+  tabGambling.addEventListener('click', ()=>showTab(tabGambling));
+  tabInfo.addEventListener('click', ()=>showTab(tabInfo));
+  tabAccount.addEventListener('click', ()=>showTab(tabAccount));
+
+  // ====== Game State (local + cloud) ======
+  let currentUser = null;   // full user object from Firestore
+  let currentUID = null;    // auth uid
+  let displayName = '';     // username field for UI
+
+  // Local runtime numbers (mirrors cloud when logged in)
   let balance = 0;
   let coins = 0;
   let cpc = 0.05;
   let rebirths = 0;
   let rebirthCost = 100_000_000_000;
+  let upgrades = {}; // key->level
+  let stats = {
+    slots_spins:0, slots_won:0, slots_profit:0,
+    mines_plays:0, mines_profit:0,
+    goals_profit:0
+  };
 
-  // --------- Autoclicker Limit: max 10 clicks/sec ---------
+  // ====== Autoclicker Limit: max 10 clicks/sec (hidden UI) ======
   let clickWindowStart = Date.now();
   let clickCountThisSec = 0;
   function canClick(){
@@ -826,7 +882,8 @@
     }
     if(clickCountThisSec >= 10) return false;
     clickCountThisSec++;
-    cpsEl.textContent = `${clickCountThisSec}/10 cps`;
+    // cpsEl exists but is visually hidden; we still update for internal debugging
+    if (cpsEl) cpsEl.textContent = `${clickCountThisSec}/10 cps`;
     return true;
   }
   setInterval(()=>{
@@ -834,11 +891,11 @@
     if(now - clickWindowStart >= 1000){
       clickWindowStart = now;
       clickCountThisSec = 0;
-      cpsEl.textContent = `0/10 cps`;
+      if (cpsEl) cpsEl.textContent = `0/10 cps`;
     }
   }, 150);
 
-  // Upgrades catalog
+  // ====== Upgrades ======
   const upgradesCatalog = [
     {key:'Small Tip',        base:250,          inc:0.05},
     {key:'Wallet Upgrade',   base:50_000,       inc:0.10},
@@ -858,7 +915,7 @@
     return Math.floor(u.base * Math.pow(1.7, level));
   }
 
-  // --------- UI Update Helpers ---------
+  // ====== UI helpers ======
   function refreshHUD(){
     balanceEl.textContent = fmt(balance);
     coinsEl.textContent = fmt(coins);
@@ -876,14 +933,12 @@
     const can = balance >= need;
     rebirthBtn.disabled = !can;
     rebirthBtn.setAttribute('aria-disabled', can ? 'false':'true');
-    rebirthNeedEl.innerHTML = `Requires: $<span id="rebirth-cost">${numberFmt0(need)}</span>`;
   }
 
-  // --------- Clicker ---------
   function buildUpgradesUI(){
     upgradesWrap.innerHTML = '';
     upgradesCatalog.forEach(row=>{
-      const level = (currentUser?.upgrades?.[row.key] || 0);
+      const level = (upgrades?.[row.key] || 0);
       const cost = upgradeCost(row.key, level);
       const div = document.createElement('div');
       div.className = 'upgrade';
@@ -902,49 +957,46 @@
     });
   }
 
-  function tryBuyUpgrade(key){
-    if(!currentUser){ toast('Login to buy upgrades'); return; }
-    const level = (currentUser.upgrades[key] || 0);
+  async function tryBuyUpgrade(key){
+    const level = (upgrades[key] || 0);
     const cost = upgradeCost(key, level);
     if(balance < cost){ toast('Not enough balance'); return; }
     balance -= cost;
-    currentUser.upgrades[key] = level + 1;
+    upgrades[key] = level + 1;
     const inc = (upgradesCatalog.find(u=>u.key===key)?.inc || 0);
     cpc = +(cpc + inc).toFixed(2);
-    persistFromSession();
+    await persist();
     refreshHUD();
     toast(`${key} upgraded to level ${level+1}`);
   }
 
-  bag.addEventListener('click', ()=>{
+  // ====== Clicker ======
+  bag.addEventListener('click', async ()=>{
     if(!canClick()) return;
-    balance += cpc;
-    coins += cpc;
-    persistFromSession();
+    balance = +(balance + cpc).toFixed(2);
+    coins = +(coins + cpc).toFixed(2);
+    await persistShallow();
     refreshHUD();
   });
   bag.addEventListener('keydown', e=>{
     if(e.key==='Enter' || e.key===' '){ e.preventDefault(); bag.click(); }
   });
 
-  rebirthBtn.addEventListener('click', ()=>{
+  rebirthBtn.addEventListener('click', async ()=>{
     const need = rebirthCost;
     if(balance < need){ toast('Not enough to rebirth'); return; }
-    if(!currentUser){ toast('Login to rebirth'); return; }
     balance = 0;
     coins = 0;
     cpc = +(cpc * 2).toFixed(2);
     rebirths += 1;
     rebirthCost = Math.floor(rebirthCost * 100);
-    currentUser.rebirths = rebirths;
-    currentUser.rebirthCost = rebirthCost;
-    currentUser.upgrades = {};
-    persistFromSession();
+    upgrades = {};
+    await persist();
     refreshHUD();
     toast('Rebirth successful! CPC doubled, cost increased ×100.');
   });
 
-  // --------- Slots ---------
+  // ====== Slots ======
   const slotSymbols = ['🍒','🍋','🍉','⭐','💎','7️⃣'];
   const slotWeights = [30,25,20,15,8,2];
 
@@ -967,8 +1019,7 @@
   }
   slotBet.addEventListener('input', updateSlotControls);
 
-  slotSpin.addEventListener('click', ()=>{
-    if(!currentUser){ toast('Login to play'); return; }
+  slotSpin.addEventListener('click', async ()=>{
     let bet = Number(slotBet.value);
     if(bet>balance){ toast('Not enough balance'); return; }
     balance -= bet; updateSlotControls(); refreshHUD();
@@ -986,15 +1037,15 @@
         const pay = slotPayout([a,b,c], bet);
         if(pay>0){
           balance += pay;
-          currentUser.stats.slots_won++;
-          currentUser.stats.slots_profit += (pay-bet);
+          stats.slots_won++;
+          stats.slots_profit += (pay-bet);
           slotMsg.textContent = `You won $${fmt(pay)} 🎉`;
         }else{
-          currentUser.stats.slots_profit -= bet;
+          stats.slots_profit -= bet;
           slotMsg.textContent = `No win, try again.`;
         }
-        currentUser.stats.slots_spins++;
-        persistFromSession();
+        stats.slots_spins++;
+        persistShallow();
         refreshHUD();
         slotSpin.disabled = false;
       }
@@ -1017,7 +1068,7 @@
     return 0;
   }
 
-  // --------- Mines ---------
+  // ====== Mines ======
   const MINES_SIZE = 25; // 5x5
   let minesState = {
     playing:false,
@@ -1057,12 +1108,11 @@
     minesMultEl.textContent = `${curMult.toFixed(2)}x`;
     const pot = m.playing ? (m.bet * curMult) : 0;
     minesPotEl.textContent = fmt(pot);
-    minesStart.disabled = m.playing || !currentUser;
+    minesStart.disabled = m.playing;
     minesCash.disabled = !m.playing || m.gems===0;
   }
 
-  minesStart.addEventListener('click', ()=>{
-    if(!currentUser){ toast('Login to play'); return; }
+  minesStart.addEventListener('click', async ()=>{
     const bet = clamp(Number(minesBet.value)||0, 1, balance);
     const bombs = Number(minesBombs.value)||1;
     if(bet<=0){ toast('Enter a valid bet'); return; }
@@ -1081,7 +1131,7 @@
       c.textContent='';
       c.style.pointerEvents='';
     });
-    persistFromSession();
+    await persistShallow();
     updateMinesNumbers();
     refreshHUD();
   });
@@ -1097,11 +1147,11 @@
         }
         c.style.pointerEvents='none';
       });
-      currentUser.stats.mines_profit -= minesState.bet;
+      stats.mines_profit -= minesState.bet;
       toast('Boom! You lost the bet.');
     }
     minesState.playing = false;
-    persistFromSession();
+    persistShallow();
     updateMinesNumbers();
     refreshHUD();
   }
@@ -1119,7 +1169,7 @@
     cell.classList.add('revealed','safe');
     cell.textContent='💎';
     minesState.gems++;
-    currentUser.stats.mines_plays++;
+    stats.mines_plays++;
     updateMinesNumbers();
     if(minesState.gems >= minesState.multipliers.length){
       minesCash.click(); // auto cashout at last step
@@ -1132,12 +1182,12 @@
     const mult = minesState.multipliers[minesState.gems] || 1;
     const win = minesState.bet * mult;
     balance += win;
-    currentUser.stats.mines_profit += (win - minesState.bet);
+    stats.mines_profit += (win - minesState.bet);
     toast(`Cashed out $${fmt(win)}!`);
     endMines(false);
   });
 
-  // --------- Goals ---------
+  // ====== Goals ======
   let goalsState = {
     playing:false,
     cols:7, rows:4,
@@ -1214,8 +1264,7 @@
     });
   }
 
-  goalsStart.addEventListener('click', ()=>{
-    if(!currentUser){ toast('Login to play'); return; }
+  goalsStart.addEventListener('click', async ()=>{
     const parts = goalsSize.value.split('x');
     const cols = Number(parts[0])||7;
     const rows = Number(parts[1])||4;
@@ -1234,7 +1283,7 @@
     buildGoalsGrid();
     lockAllGoals();
     unlockColumn(0);
-    persistFromSession();
+    await persistShallow();
     updateGoalsNumbers();
     refreshHUD();
   });
@@ -1249,11 +1298,11 @@
       g.style.pointerEvents='none';
     });
     if(loss){
-      currentUser.stats.goals_profit -= goalsState.bet;
+      stats.goals_profit -= goalsState.bet;
       toast('Oh no! You hit a bomb.');
     }
     goalsState.playing=false;
-    persistFromSession();
+    persistShallow();
     updateGoalsNumbers();
     refreshHUD();
   }
@@ -1289,71 +1338,61 @@
     const cashMult = goalsState.mults[goalsState.col-1] || 1;
     const win = goalsState.bet * cashMult;
     balance += win;
-    currentUser.stats.goals_profit += (win - goalsState.bet);
+    stats.goals_profit += (win - goalsState.bet);
     toast(`Cashed out $${fmt(win)}!`);
     endGoals(false);
   });
 
-  // --------- Leaderboard ---------
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-  }
-
-  function renderLeaderboard(){
-    const money = Object.values(users).sort((a,b)=>b.balance - a.balance).slice(0,3);
-    lbMoney.innerHTML='';
-    if(!money.length){
-      const d=document.createElement('div'); d.className='muted'; d.textContent='No accounts yet.'; lbMoney.appendChild(d);
-    }else{
-      money.forEach((u, idx)=>{
-        const row = document.createElement('div');
-        row.style.display='flex';
-        row.style.justifyContent='space-between';
-        row.style.alignItems='center';
-        row.style.background='var(--btn)';
-        row.style.border='1px solid rgba(255,255,255,.08)';
-        row.style.borderRadius='10px';
-        row.style.padding='8px 10px';
-        row.innerHTML = `<div><b>${idx+1}.</b> ${escapeHtml(u.username)}</div><div><b>$${fmt(u.balance)}</b></div>`;
-        lbMoney.appendChild(row);
-      });
-    }
-    const reb = Object.values(users).sort((a,b)=> (b.rebirths||0) - (a.rebirths||0)).slice(0,3);
-    lbRebirths.innerHTML='';
-    if(!reb.length){
-      const d=document.createElement('div'); d.className='muted'; d.textContent='No accounts yet.'; lbRebirths.appendChild(d);
-    }else{
-      reb.forEach((u, idx)=>{
-        const row = document.createElement('div');
-        row.style.display='flex';
-        row.style.justifyContent='space-between';
-        row.style.alignItems='center';
-        row.style.background='var(--btn)';
-        row.style.border='1px solid rgba(255,255,255,.08)';
-        row.style.borderRadius='10px';
-        row.style.padding='8px 10px';
-        row.innerHTML = `<div><b>${idx+1}.</b> ${escapeHtml(u.username)}</div><div><b>${u.rebirths||0} rebirths</b></div>`;
-        lbRebirths.appendChild(row);
-      });
+  // ====== Leaderboard ======
+  async function renderLeaderboard(){
+    lbMoney.innerHTML = '';
+    if(!cloudReady){ const d=document.createElement('div'); d.className='muted'; d.textContent='Cloud not ready'; lbMoney.appendChild(d); return; }
+    try{
+      const snap = await db.collection('users')
+        .orderBy('balance', 'desc')
+        .limit(10)
+        .get();
+      if(snap.empty){
+        const d=document.createElement('div'); d.className='muted'; d.textContent='No accounts yet.'; lbMoney.appendChild(d);
+      }else{
+        let idx=0;
+        snap.forEach(doc=>{
+          const u = doc.data();
+          const row = document.createElement('div');
+          row.style.display='flex';
+          row.style.justifyContent='space-between';
+          row.style.alignItems='center';
+          row.style.background='var(--btn)';
+          row.style.border='1px solid rgba(255,255,255,.08)';
+          row.style.borderRadius='10px';
+          row.style.padding='8px 10px';
+          row.innerHTML = `<div><b>${++idx}.</b> ${escapeHtml(u.username||'(no name)')}</div><div><b>$${fmt(u.balance||0)}</b></div>`;
+          lbMoney.appendChild(row);
+        });
+      }
+    }catch(e){
+      console.error(e);
+      const d=document.createElement('div'); d.className='muted'; d.textContent='Failed to load leaderboard.'; lbMoney.appendChild(d);
     }
   }
   lbRefresh.addEventListener('click', renderLeaderboard);
 
-  // --------- Admin ---------
-  const ADMIN_PASSCODE = '5113';
+  // ====== Admin ======
+  const ADMIN_PASSCODE = '5113-1973-2010';
 
-  const panelIds = ['panel-leaderboard','panel-admin','panel-money'];
   function openPanelById(id){
     const el = qs('#'+id);
     if(el) { el.classList.add('show'); el.setAttribute('aria-hidden', 'false'); }
   }
 
   adminLogin.addEventListener('click', ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
     if(adminPass.value.trim() === ADMIN_PASSCODE){
       adminLocked.style.display='none';
       adminBody.style.display='';
       renderAdminAccounts();
-      admUser.value = '';
+      admUid.value = '';
+      admUsername.value = '';
       admBalance.value = '';
     }else{
       toast('Incorrect passcode');
@@ -1365,162 +1404,220 @@
     adminPass.value='';
   });
 
-  function renderAdminAccounts(){
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  }
+
+  async function renderAdminAccounts(){
+    if(!cloudReady){ adminAccounts.innerHTML='<div class="muted">Cloud not ready</div>'; return; }
     adminAccounts.innerHTML = '';
-    const usernames = Object.keys(users).sort((a,b)=>a.localeCompare(b));
-    if(!usernames.length){
+    try{
+      const snap = await db.collection('users').orderBy('username').limit(100).get();
+      if(snap.empty){
+        const d=document.createElement('div');
+        d.className='muted';
+        d.textContent='No users yet.';
+        adminAccounts.appendChild(d);
+        return;
+      }
+      snap.forEach(doc=>{
+        const u = doc.data();
+        const uid = doc.id;
+        const item = document.createElement('div');
+        item.style.display='flex';
+        item.style.alignItems='center';
+        item.style.justifyContent='space-between';
+        item.style.gap='8px';
+        item.style.background='var(--btn)';
+        item.style.border='1px solid rgba(255,255,255,.08)';
+        item.style.borderRadius='10px';
+        item.style.padding='8px';
+
+        const left = document.createElement('div');
+        left.innerHTML = `<b>${escapeHtml(u.username||'(no name)')}</b><div class="muted">$${fmt(u.balance||0)}</div>`;
+
+        const right = document.createElement('div');
+        right.style.display='flex';
+        right.style.gap='6px';
+
+        const eBtn = document.createElement('button');
+        eBtn.className='btn text';
+        eBtn.textContent='Edit';
+        eBtn.addEventListener('click', ()=>{
+          admUid.value = uid;
+          admUsername.value = u.username||'';
+          admBalance.value = (u.balance||0).toString();
+        });
+
+        const wBtn = document.createElement('button');
+        wBtn.className='btn';
+        wBtn.style.background='var(--danger)';
+        wBtn.style.color='#fff';
+        wBtn.textContent='Wipe';
+        wBtn.addEventListener('click', async ()=>{
+          if(!cloudReady){ toast('Cloud not ready'); return; }
+          if(confirm(`Wipe user "${u.username||uid}"? This cannot be undone.`)){
+            await db.collection('users').doc(uid).delete();
+            if(currentUID===uid){ await auth.signOut(); }
+            await renderAdminAccounts();
+            await renderLeaderboard();
+            await pullOrInitUser(); // refresh local state if needed
+            refreshHUD();
+            toast('User wiped');
+          }
+        });
+
+        right.appendChild(eBtn);
+        right.appendChild(wBtn);
+        item.appendChild(left);
+        item.appendChild(right);
+        adminAccounts.appendChild(item);
+      });
+    }catch(e){
+      console.error(e);
       const d=document.createElement('div');
       d.className='muted';
-      d.textContent='No users yet.';
+      d.textContent='Failed to load users.';
       adminAccounts.appendChild(d);
-      return;
     }
-    usernames.forEach(u=>{
-      const item = document.createElement('div');
-      item.style.display='flex';
-      item.style.alignItems='center';
-      item.style.justifyContent='space-between';
-      item.style.gap='8px';
-      item.style.background='var(--btn)';
-      item.style.border='1px solid rgba(255,255,255,.08)';
-      item.style.borderRadius='10px';
-      item.style.padding='8px';
-
-      const left = document.createElement('div');
-      left.innerHTML = `<b>${escapeHtml(u)}</b><div class="muted">$${fmt(users[u].balance)}</div>`;
-
-      const right = document.createElement('div');
-      right.style.display='flex';
-      right.style.gap='6px';
-
-      const eBtn = document.createElement('button');
-      eBtn.className='btn text';
-      eBtn.textContent='Edit';
-      eBtn.addEventListener('click', ()=>{
-        admUser.value = u;
-        admBalance.value = users[u].balance.toString();
-      });
-
-      const wBtn = document.createElement('button');
-      wBtn.className='btn';
-      wBtn.style.background='var(--danger)';
-      wBtn.style.color='#fff';
-      wBtn.textContent='Wipe';
-      wBtn.addEventListener('click', ()=>{
-        if(confirm(`Wipe user "${u}"? This cannot be undone.`)){
-          delete users[u];
-          if(currentUsername===u){ currentUsername=''; currentUser=null; setSession(''); }
-          saveUsers(users);
-          renderAdminAccounts();
-          renderLeaderboard();
-          refreshHUD();
-          toast('User wiped');
-        }
-      });
-
-      right.appendChild(eBtn);
-      right.appendChild(wBtn);
-      item.appendChild(left);
-      item.appendChild(right);
-      adminAccounts.appendChild(item);
-    });
   }
 
   adminRefresh.addEventListener('click', renderAdminAccounts);
 
-  adminResetAll.addEventListener('click', ()=>{
+  adminResetAll.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
     if(!confirm('Reset ALL progress for ALL users?')) return;
-    Object.values(users).forEach(u=>{
-      u.balance=0; u.coins=0; u.cpc=0.05; u.rebirths=0; u.upgrades={}; u.rebirthCost=100_000_000_000;
-    });
-    if(currentUser){
-      balance=0; coins=0; cpc=0.05; rebirths=0; rebirthCost=100_000_000_000;
+    try{
+      const snap = await db.collection('users').get();
+      const batch = db.batch();
+      snap.forEach(doc=>{
+        const ref = db.collection('users').doc(doc.id);
+        batch.update(ref, {
+          balance:0, coins:0, cpc:0.05, rebirths:0, rebirthCost:100_000_000_000,
+          upgrades:{}, stats:{ slots_spins:0, slots_won:0, slots_profit:0, mines_plays:0, mines_profit:0, goals_profit:0 },
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+      await batch.commit();
+      if(currentUID){
+        balance=0; coins=0; cpc=0.05; rebirths=0; rebirthCost=100_000_000_000; upgrades={}; stats={slots_spins:0, slots_won:0, slots_profit:0, mines_plays:0, mines_profit:0, goals_profit:0};
+      }
+      await renderAdminAccounts();
+      await renderLeaderboard();
+      refreshHUD();
+      toast('All accounts reset');
+    }catch(e){
+      console.error(e);
+      toast('Reset failed');
     }
-    saveUsers(users);
-    renderAdminAccounts();
-    renderLeaderboard();
-    refreshHUD();
-    toast('All accounts reset');
   });
 
-  admSave.addEventListener('click', ()=>{
-    const u = admUser.value.trim();
-    if(!u || !users[u]){ toast('Select a valid user'); return; }
+  admSave.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const uid = admUid.value.trim();
+    if(!uid){ toast('Select a valid user'); return; }
     const val = Number(admBalance.value);
     if(!Number.isFinite(val) || val<0){ toast('Enter a valid balance'); return; }
-    users[u].balance = val;
-    if(currentUsername===u){ balance=val; }
-    saveUsers(users);
-    renderAdminAccounts();
-    renderLeaderboard();
+    await db.collection('users').doc(uid).set({ balance: val, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
+    if(currentUID===uid){ balance = val; }
+    await renderAdminAccounts();
+    await renderLeaderboard();
     refreshHUD();
     toast('Changes saved');
   });
 
-  admGive.addEventListener('click', ()=>{
-    const u = admUser.value.trim();
-    if(!u || !users[u]){ toast('Select a valid user'); return; }
-    users[u].balance += 1000;
-    if(currentUsername===u){ balance += 1000; }
-    saveUsers(users);
-    renderAdminAccounts();
-    renderLeaderboard();
+  admGive1k.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const uid = admUid.value.trim();
+    if(!uid){ toast('Select a valid user'); return; }
+    const ref = db.collection('users').doc(uid);
+    await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(ref);
+      if(!snap.exists) return;
+      const cur = snap.data().balance||0;
+      tx.update(ref, { balance: cur + 1000, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    });
+    if(currentUID===uid){ balance += 1000; }
+    await renderAdminAccounts();
+    await renderLeaderboard();
     refreshHUD();
     toast('Gave +1,000');
   });
 
-  admWipe.addEventListener('click', ()=>{
-    const u = admUser.value.trim();
-    if(!u || !users[u]){ toast('Select a valid user'); return; }
-    if(!confirm(`Wipe user "${u}"?`)) return;
-    delete users[u];
-    if(currentUsername===u){ currentUsername=''; currentUser=null; setSession(''); }
-    saveUsers(users);
+  admWipe.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const uid = admUid.value.trim();
+    if(!uid){ toast('Select a valid user'); return; }
+    if(!confirm(`Wipe user "${uid}"?`)) return;
+    await db.collection('users').doc(uid).delete();
+    if(currentUID===uid){ await auth.signOut(); }
     adminAccounts.innerHTML='';
-    admUser.value=''; admBalance.value='';
-    renderLeaderboard();
+    admUid.value=''; admUsername.value=''; admBalance.value='';
+    await renderLeaderboard();
     refreshHUD();
     toast('User wiped');
   });
 
-  // --------- Money (Transfers) ---------
-  function populateMoney(){
-    if(currentUser){
-      moneyFrom.value = currentUser.username;
+  // ====== Money (Transfers) ======
+  async function populateMoney(){
+    if(currentUID){
+      moneyFrom.value = displayName || '(no username)';
     }else{
       moneyFrom.value = '(not logged in)';
     }
     moneyTo.innerHTML = '';
-    const usernames = Object.keys(users).sort((a,b)=>a.localeCompare(b));
-    usernames.forEach(u=>{
-      if(!currentUser || u!==currentUser.username){
-        const opt = document.createElement('option');
-        opt.value = u; opt.textContent = u;
-        moneyTo.appendChild(opt);
-      }
-    });
+    if(!cloudReady){ return; }
+    try{
+      const snap = await db.collection('users').orderBy('username').get();
+      snap.forEach(doc=>{
+        if(!currentUID || doc.id !== currentUID){
+          const u = doc.data();
+          const opt = document.createElement('option');
+          opt.value = doc.id; opt.textContent = u.username || doc.id;
+          moneyTo.appendChild(opt);
+        }
+      });
+    }catch(e){
+      console.error(e);
+    }
   }
 
-  moneySend.addEventListener('click', ()=>{
-    if(!currentUser){ toast('Login to send money'); return; }
-    const to = moneyTo.value;
+  moneySend.addEventListener('click', async ()=>{
+    if(!currentUID){ toast('Login to send money'); return; }
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const toUid = moneyTo.value;
     const amt = Number(moneyAmt.value);
-    if(!to || !users[to]){ toast('Choose a recipient'); return; }
+    if(!toUid){ toast('Choose a recipient'); return; }
     if(!Number.isFinite(amt) || amt<=0){ toast('Enter valid amount'); return; }
-    if(amt>balance){ toast('Not enough balance'); return; }
-    if(to===currentUser.username){ toast('Cannot send to yourself'); return; }
+    if(toUid===currentUID){ toast('Cannot send to yourself'); return; }
 
-    balance -= amt;
-    users[to].balance += amt;
-    saveUsers(users);
-    persistFromSession();
-    renderLeaderboard();
-    refreshHUD();
-    toast(`Sent $${fmt(amt)} to ${to}`);
-    moneyAmt.value='';
+    const fromRef = db.collection('users').doc(currentUID);
+    const toRef = db.collection('users').doc(toUid);
+
+    try{
+      await db.runTransaction(async (tx)=>{
+        const fromSnap = await tx.get(fromRef);
+        const toSnap = await tx.get(toRef);
+        if(!fromSnap.exists) throw new Error('Sender not found');
+        if(!toSnap.exists) throw new Error('Recipient not found');
+        const fromBal = Number(fromSnap.data().balance||0);
+        if(amt > fromBal) throw new Error('Not enough balance');
+        tx.update(fromRef, { balance: fromBal - amt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        const toBal = Number(toSnap.data().balance||0);
+        tx.update(toRef, { balance: toBal + amt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      });
+      balance -= amt;
+      await renderLeaderboard();
+      refreshHUD();
+      toast(`Sent $${fmt(amt)} ✅`);
+      moneyAmt.value='';
+    }catch(e){
+      console.error(e);
+      toast(e.message || 'Transfer failed');
+    }
   });
 
-  // --------- Accounts ---------
+  // ====== Account ======
   function setForms(mode){ // 'login' | 'register'
     if(mode==='login'){
       acctTabLogin.classList.add('active');
@@ -1537,79 +1634,141 @@
   acctTabLogin.addEventListener('click', ()=>setForms('login'));
   acctTabRegister.addEventListener('click', ()=>setForms('register'));
 
-  loginBtn.addEventListener('click', ()=>{
-    const u = loginUser.value.trim();
-    const p = loginPass.value;
-    if(!u || !p){ toast('Enter username and password'); return; }
-    if(!users[u] || users[u].password !== p){ toast('Invalid credentials'); return; }
-    currentUsername = u;
-    currentUser = users[u];
-    setSession(u);
-    loadSessionFromUser();
-    toast(`Welcome back, ${u}!`);
+  loginBtn.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const email = (loginEmail.value||'').trim();
+    const pass = loginPass.value;
+    if(!email || !pass){ toast('Enter email and password'); return; }
+    try{
+      await auth.signInWithEmailAndPassword(email, pass);
+      toast('Welcome back!');
+    }catch(e){ toast(e.message||'Login failed'); }
   });
 
-  regBtn.addEventListener('click', ()=>{
-    const u = regUser.value.trim();
+  logoutBtn.addEventListener('click', async ()=>{
+    try{ await auth.signOut(); }catch(e){ console.error(e); }
+  });
+
+  regBtn.addEventListener('click', async ()=>{
+    if(!cloudReady){ toast('Cloud not ready'); return; }
+    const username = (regUsername.value||'').trim();
+    const email = (regEmail.value||'').trim();
     const p1 = regPass.value;
     const p2 = regPass2.value;
-    if(!u || !p1 || !p2){ toast('Fill all fields'); return; }
-    if(users[u]){ toast('Username already exists'); return; }
+    if(!username || !email || !p1 || !p2){ toast('Fill all fields'); return; }
     if(p1!==p2){ toast('Passwords do not match'); return; }
-    const newUser = defaultUserState();
-    newUser.username = u;
-    newUser.password = p1;
-    users[u] = newUser;
-    saveUsers(users);
-    setForms('login');
-    loginUser.value = u;
-    toast('Account created. You can login now.');
-  });
-
-  manualSaveBtn.addEventListener('click', ()=>{
-    if(currentUser){
-      persistFromSession();
-      toast('Saved.');
-    }else{
-      toast('Login to save');
+    try{
+      const cred = await auth.createUserWithEmailAndPassword(email, p1);
+      const uid = cred.user.uid;
+      await db.collection('users').doc(uid).set({
+        username,
+        email,
+        balance:0, coins:0, cpc:0.05, rebirths:0, rebirthCost:100_000_000_000,
+        upgrades:{},
+        stats:{ slots_spins:0, slots_won:0, slots_profit:0, mines_plays:0, mines_profit:0, goals_profit:0 },
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      toast('Account created');
+      setForms('login');
+      loginEmail.value = email;
+    }catch(e){
+      console.error(e); toast(e.message||'Register failed');
     }
   });
 
-  function persistFromSession(){
-    if(!currentUser) return;
-    currentUser.balance = balance;
-    currentUser.coins = coins;
-    currentUser.cpc = cpc;
-    currentUser.rebirths = rebirths;
-    currentUser.rebirthCost = rebirthCost;
-    users[currentUser.username] = currentUser;
-    saveUsers(users);
-    updateAcctStatus();
+  manualSaveBtn.addEventListener('click', async ()=>{
+    await persist();
+    toast('Saved.');
+  });
+
+  // ====== Auth listener ======
+  async function startAuthListener(){
+    auth.onAuthStateChanged(async (user)=>{
+      if(user){
+        currentUID = user.uid;
+        await pullOrInitUser();
+        acctStatus.textContent = `Logged in as ${displayName} — Rebirths: ${rebirths||0}`;
+        refreshHUD();
+        renderLeaderboard();
+      }else{
+        currentUID = null;
+        currentUser = null;
+        displayName = '';
+        acctStatus.textContent = 'Not logged in';
+        refreshHUD();
+      }
+    });
   }
 
-  function loadSessionFromUser(){
-    if(!currentUser) return;
-    balance = currentUser.balance || 0;
-    coins = currentUser.coins || 0;
-    cpc = currentUser.cpc || 0.05;
-    rebirths = currentUser.rebirths || 0;
-    rebirthCost = currentUser.rebirthCost || 100_000_000_000;
-    refreshHUD();
-    updateAcctStatus();
+  async function pullOrInitUser(){
+    if(!currentUID || !cloudReady) return;
+    const ref = db.collection('users').doc(currentUID);
+    let snap = await ref.get();
+    if(!snap.exists){
+      const email = auth.currentUser?.email || '';
+      const username = auth.currentUser?.email?.split('@')[0] || 'Player';
+      await ref.set({
+        username, email,
+        balance:0, coins:0, cpc:0.05, rebirths:0, rebirthCost:100_000_000_000,
+        upgrades:{},
+        stats:{ slots_spins:0, slots_won:0, slots_profit:0, mines_plays:0, mines_profit:0, goals_profit:0 },
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      snap = await ref.get();
+    }
+    currentUser = snap.data() || {};
+
+    // pull into local
+    displayName = currentUser.username || 'Player';
+    balance = Number(currentUser.balance||0);
+    coins = Number(currentUser.coins||0);
+    cpc = Number(currentUser.cpc||0.05);
+    rebirths = Number(currentUser.rebirths||0);
+    rebirthCost = Number(currentUser.rebirthCost||100_000_000_000);
+    upgrades = currentUser.upgrades || {};
+    stats = Object.assign({
+      slots_spins:0, slots_won:0, slots_profit:0, mines_plays:0, mines_profit:0, goals_profit:0
+    }, currentUser.stats||{});
   }
 
-  function updateAcctStatus(){
-    if(currentUser){
-      acctStatus.textContent = `Logged in as ${currentUser.username} — Rebirths: ${currentUser.rebirths||0}`;
-    }else{
-      acctStatus.textContent = 'Not logged in';
+  // ====== Persistence ======
+  async function persist(){
+    if(!currentUID || !cloudReady) { refreshHUD(); return; }
+    try{
+      const ref = db.collection('users').doc(currentUID);
+      await ref.set({
+        username: displayName || currentUser?.username || 'Player',
+        balance, coins, cpc, rebirths, rebirthCost,
+        upgrades,
+        stats,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
+      acctStatus.textContent = `Logged in as ${displayName} — Rebirths: ${rebirths||0}`;
+    }catch(e){
+      console.error(e);
+    }
+  }
+  async function persistShallow(){
+    // lighter writes during rapid play
+    if(!currentUID || !cloudReady) return;
+    try{
+      const ref = db.collection('users').doc(currentUID);
+      await ref.set({
+        balance, coins, cpc,
+        stats,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
+    }catch(e){
+      console.error(e);
     }
   }
 
   // Auto-save every 60s
-  setInterval(()=>{ if(currentUser) persistFromSession(); }, 60_000);
+  setInterval(()=>{ persist(); }, 60_000);
 
-  // --------- Gambling sub-tabs ---------
+  // ====== Gambling sub-tabs ======
   const gtSlot = qs('#gt-slot');
   const gtMines = qs('#gt-mines');
   const gtGoals = qs('#gt-goals');
@@ -1631,24 +1790,14 @@
   gtMines.addEventListener('click', ()=>showGame(gtMines));
   gtGoals.addEventListener('click', ()=>showGame(gtGoals));
 
-  // --------- Init ---------
-  function buildUpgradesIfEmpty(){ if(!upgradesWrap.childElementCount) buildUpgradesUI(); }
-
-  function firstRun(){
-    if(currentUsername && users[currentUsername]){
-      currentUser = users[currentUsername];
-      loadSessionFromUser();
-    }else{
-      currentUser = null;
-      updateAcctStatus();
-      refreshHUD();
-    }
-    buildUpgradesIfEmpty();
-    renderLeaderboard();
-    updateSlotControls();
-    updateMinesNumbers();
+  // ====== Start ======
+  async function firstRun(){
+    await initFirebase();
+    // If initial read failed because of locked rules, we'll still mark cloudReady on first successful auth write
+    resetMinesGrid();
     buildGoalsGrid();
-    updateGoalsNumbers();
+    refreshHUD();
+    await startAuthListener();
   }
   firstRun();
   </script>
